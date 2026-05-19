@@ -1,6 +1,7 @@
 FROM golang:1.25.4 AS builder
 
 ENV CGO_ENABLED=1
+ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
 
 # 1. Die ONNX Runtime C-Library herunterladen (Wählen Sie die passende Version)
