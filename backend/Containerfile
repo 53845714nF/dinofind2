@@ -1,0 +1,40 @@
+FROM golang:1.25.4 AS builder
+
+ENV CGO_ENABLED=1
+WORKDIR /app
+
+# 1. Die ONNX Runtime C-Library herunterladen (Wählen Sie die passende Version)
+# Wir verwenden hier die CPU-Version für Linux (x64)
+# Für andere Architekturen oder GPU-Versionen muss die URL angepasst werden
+ARG ONNX_VERSION=1.23.2
+RUN apt-get update && apt-get install -y wget unzip
+RUN wget https://github.com/microsoft/onnxruntime/releases/download/v${ONNX_VERSION}/onnxruntime-linux-x64-${ONNX_VERSION}.tgz && \
+    tar -xzf onnxruntime-linux-x64-${ONNX_VERSION}.tgz && \
+    rm onnxruntime-linux-x64-${ONNX_VERSION}.tgz
+
+COPY . .
+
+# 3. ONNX Runtime Go-Bindings und die App kompilieren
+# Beachten Sie, dass Sie beim Kompilieren den Pfad zur C-Shared Library angeben müssen
+# Die libonnxruntime.so befindet sich im entpackten Verzeichnis onnxruntime-linux-x64-vX.X.X/lib
+ENV CGO_LDFLAGS="-L/app/onnxruntime-linux-x64-${ONNX_VERSION}/lib"
+ENV CGO_CFLAGS="-I/app/onnxruntime-linux-x64-${ONNX_VERSION}/include"
+
+# Modul-Abhängigkeiten herunterladen (beinhaltet onnxruntime-go)
+RUN go mod tidy
+
+# Applikation kompilieren
+# Verwenden Sie -ldflags -s -w um die Größe der Binärdatei zu reduzieren
+RUN go build -o dinofind -ldflags="-s -w" ./cmd/dinofind
+
+FROM gcr.io/distroless/cc-debian13:nonroot
+USER 1001:1001
+WORKDIR /app
+
+COPY --from=builder /app/dinofind /usr/local/bin/dinofind
+COPY --from=builder /app/internal/vectorizer/dinov2.onnx /app/dinov2.onnx
+
+ARG ONNX_VERSION=1.23.2
+COPY --from=builder /app/onnxruntime-linux-x64-${ONNX_VERSION}/lib/libonnxruntime.so /usr/lib/libonnxruntime.so
+
+CMD ["/usr/local/bin/dinofind"]
