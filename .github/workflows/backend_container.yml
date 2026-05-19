@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+            lfs: true
 
       - name: Buildah Action
         id: build_image
