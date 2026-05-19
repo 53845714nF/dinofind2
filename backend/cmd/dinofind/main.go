@@ -23,6 +23,21 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, status)
 }
 
+func corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "localhost:3000")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	cfg := config.LoadConfig()
 
@@ -57,7 +72,11 @@ func main() {
 		port = "10000"
 	}
 	log.Printf("Server startet auf http://localhost:%s", port)
-	if err := http.ListenAndServe(":"+port, mux); err != nil {
+
+	// Wrap mux in CORS middleware
+	handlerWithCORS := corsMiddleware(mux)
+
+	if err := http.ListenAndServe(":"+port, handlerWithCORS); err != nil {
 		log.Fatalf("Serverfehler: %v", err)
 	}
 }
