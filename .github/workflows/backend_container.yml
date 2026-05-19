@@ -30,7 +30,7 @@ jobs:
           oci: true
           containerfiles: |
             ./backend/Containerfile
-          context: .
+          context: ./backend
 
       - name: Push to GitHub Container Registry
         uses: redhat-actions/push-to-registry@v2
