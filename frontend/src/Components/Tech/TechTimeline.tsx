@@ -20,8 +20,8 @@ const items: TimelineItem[] = [
     description: "30,000 Flickr images serve as the starting point for the image search.",
   },
   {
-    name: "DINOv3",
-    href: "https://github.com/facebookresearch/dinov3",
+    name: "DINOv2",
+    href: "https://github.com/facebookresearch/dinov2",
     logo: metaLogo,
     logoAlt: "Meta Logo",
     bgColor: "bg-blue-600",
@@ -34,14 +34,6 @@ const items: TimelineItem[] = [
     logoAlt: "Qdrant",
     bgColor: "bg-gray-800",
     description: "Vector Database stores the embeddings for fast similarity searches.",
-  },
-  {
-    name: "RustFS",
-    href: "https://github.com/rustfs/rustfs",
-    logo: rustfsLogo,
-    logoAlt: "RustFS",
-    bgColor: "bg-gray-800",
-    description: "Object Storage stores the original images in an S3-compatible bucket.",
   },
   {
     name: "React",
