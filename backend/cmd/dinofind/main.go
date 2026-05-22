@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strconv"
 
 	"dinofind/internal/config"
@@ -12,6 +13,8 @@ import (
 
 	"github.com/qdrant/go-client/qdrant"
 )
+
+var allowedOriginRx = regexp.MustCompile(`^https?://(localhost(:\d+)?|([a-zA-Z0-9-]+\.)*dinofind\.com)$`)
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	status := "Running"
@@ -25,7 +28,10 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "localhost:3000, *.dinofind.com")
+		origin := r.Header.Get("Origin")
+		if allowedOriginRx.MatchString(origin) {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+		}
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 
