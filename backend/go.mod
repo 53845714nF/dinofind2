@@ -6,7 +6,7 @@ require github.com/disintegration/imaging v1.6.2
 
 require (
 	github.com/qdrant/go-client v1.17.1
-	github.com/yalue/onnxruntime_go v1.23.0
+	github.com/yalue/onnxruntime_go v1.38.0
 )
 
 require (
