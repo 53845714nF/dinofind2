@@ -37,7 +37,7 @@ jobs:
           context: ./frontend
 
       - name: Push to GitHub Container Registry
-        uses: redhat-actions/push-to-registry@v2
+        uses: redhat-actions/push-to-registry@v3
         with:
           image: ${{ steps.build_image.outputs.image }}
           tags: ${{ steps.build_image.outputs.tags }}
