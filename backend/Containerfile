@@ -7,7 +7,7 @@ WORKDIR /app
 # 1. Die ONNX Runtime C-Library herunterladen (Wählen Sie die passende Version)
 # Wir verwenden hier die CPU-Version für Linux (x64)
 # Für andere Architekturen oder GPU-Versionen muss die URL angepasst werden
-ARG ONNX_VERSION=1.23.2
+ARG ONNX_VERSION=1.32.0
 RUN apt-get update && apt-get install -y wget unzip
 RUN wget https://github.com/microsoft/onnxruntime/releases/download/v${ONNX_VERSION}/onnxruntime-linux-x64-${ONNX_VERSION}.tgz && \
     tar -xzf onnxruntime-linux-x64-${ONNX_VERSION}.tgz && \
