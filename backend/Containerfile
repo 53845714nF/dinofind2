@@ -35,7 +35,7 @@ WORKDIR /app
 COPY --from=builder /app/dinofind /usr/local/bin/dinofind
 COPY --from=builder /app/internal/vectorizer/dinov2.onnx /app/dinov2.onnx
 
-ARG ONNX_VERSION=1.23.2
+ARG ONNX_VERSION=1.32.0
 COPY --from=builder /app/onnxruntime-linux-x64-${ONNX_VERSION}/lib/libonnxruntime.so /usr/lib/libonnxruntime.so
 
 CMD ["/usr/local/bin/dinofind"]
